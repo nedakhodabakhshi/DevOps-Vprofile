@@ -1,0 +1,26 @@
+version: 0.2
+phases:
+  install:
+    runtime-versions:
+      java: corretto11 # استفاده از Java 11
+    commands:
+      - echo Installing dependencies...
+      - yum install -y maven # نصب Maven
+  pre_build:
+    commands:
+      - echo Preparing environment variables...
+      - export DB_HOST=my-rds-instance-1.c1u4si4autpe.us-east-1.rds.amazonaws.com
+      - export DB_USERNAME=admin
+      - export DB_PASSWORD=YourStrongPassword123
+      - export MEMCACHED_ACTIVE_HOST=cl-me-aquivanci0db.9tytbr.cfg.use1.cache.amazonaws.com
+      - export RABBITMQ_ADDRESS=b-d72faa47-5352-458e-964b-025ca48677d0-1.mq.us-east-1.amazonaws.com
+  build:
+    commands:
+      - echo Building the project...
+      - mvn clean package
+  post_build:
+    commands:
+      - echo Build completed successfully.
+artifacts:
+  files:
+    - target/*.jar
