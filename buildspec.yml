@@ -2,7 +2,7 @@ version: 0.2
 phases:
   install:
     runtime-versions:
-      java: corretto11 # استفاده از Java 11
+      java: corretto11 
     commands:
       - echo Updating package lists...
       - apt-get update -y
