@@ -14,8 +14,8 @@ phases:
       - export DB_HOST=vp-rds-instance.c1u4si4autpe.us-east-1.rds.amazonaws.com
       - export DB_USERNAME=admin
       - export DB_PASSWORD=RdsDatabase123
-      - export MEMCACHED_ACTIVE_HOST=cl-vp-1papznnvna9wq.9tytbr.cfg.use1.cache.amazonaws.com
-      - export RABBITMQ_ADDRESS=b-445f5f54-01c1-489a-8802-d688387739cf-1.mq.us-east-1.amazonaws.com
+      - export MEMCACHED_ACTIVE_HOST=cl-vp-97lvxt1i008y.9tytbr.cfg.use1.cache.amazonaws.com
+      - export RABBITMQ_ADDRESS=b-b80e35f3-50ee-41f9-9771-f2303c1e485f-1.mq.us-east-1.amazonaws.com
   build:
     commands:
       - echo Building the project...
