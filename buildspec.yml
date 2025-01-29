@@ -12,8 +12,8 @@ phases:
 
   pre_build:
     commands:
-      - echo "🔎 Downloading db_backup.sql from GitHub..."
-      - curl -o db_backup.sql https://github.com/nedakhodabakhshi/DevOps-Vprofile/blob/main/src/main/resources/db_backup.sql 
+      #- echo "🔎 Downloading db_backup.sql from GitHub..."
+      #- curl -o db_backup.sql https://github.com/nedakhodabakhshi/DevOps-Vprofile/blob/main/src/main/resources/db_backup.sql 
       #- echo "Copying db_backup.sql to the root directory..."
       #- cp src/main/resources/db_backup.sql .
       - echo "Setting up environment variables..."
