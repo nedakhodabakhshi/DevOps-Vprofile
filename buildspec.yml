@@ -18,11 +18,11 @@ phases:
       - export RABBITMQ_ADDRESS=b-b80e35f3-50ee-41f9-9771-f2303c1e485f-1.mq.us-east-1.amazonaws.com
   build:
     commands:
-      - echo Building the project...
-      - mvn clean package
+      - echo Importing database backup...
+      - mysql -h $DB_HOST -u $DB_USERNAME -p$DB_PASSWORD accounts < db_backup.sql
   post_build:
     commands:
-      - echo Build completed successfully.
+      - echo Database import completed successfully.
 artifacts:
   files:
-    - target/*.jar
+    - db_backup.sql
