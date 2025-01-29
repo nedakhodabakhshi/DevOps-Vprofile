@@ -20,6 +20,8 @@ phases:
 
   build:
     commands:
+      - echo "Copying db_backup.sql to the root directory..."
+      - cp src/main/resources/db_backup.sql
       - echo "🚀 Importing database backup..."
       - mysql --password="RdsDatabase123" -h "vp-rds-instance.c1u4si4autpe.us-east-1.rds.amazonaws.com" -u "admin" accounts < db_backup.sql
 
