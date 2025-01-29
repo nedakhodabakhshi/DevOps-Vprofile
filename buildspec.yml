@@ -22,15 +22,9 @@ phases:
 
   build:
    commands:
-    - echo "🔎 Checking for db_backup.sql..."
     - if [ ! -f db_backup.sql ]; then echo "❌ Error: db_backup.sql not found!"; exit 1; fi
-
-    - echo "🔎 Testing MySQL connection..."
     - mysqladmin ping -h "$DB_HOST" -u "$DB_USERNAME" --password="$DB_PASSWORD" || exit 1
-
-    - echo "🚀 Importing database backup..."
     - MYSQL_PWD="$DB_PASSWORD" mysql -h "$DB_HOST" -u "$DB_USERNAME" accounts < db_backup.sql
-
 
   post_build:
     commands:
