@@ -32,4 +32,17 @@ phases:
           exit 1
         fi
 
-      - echo "
+      - echo "🔎 Testing MySQL connection..."
+      - mysqladmin ping -h "$DB_HOST" -u "$DB_USERNAME" --password="$DB_PASSWORD"
+
+      - echo "🚀 Importing database backup..."
+      - export MYSQL_PWD="$DB_PASSWORD"
+      - mysql -h "$DB_HOST" -u "$DB_USERNAME" accounts < db_backup.sql
+
+  post_build:
+    commands:
+      - echo "✅ Database import completed successfully."
+
+artifacts:
+  files:
+    - db_backup.sql
