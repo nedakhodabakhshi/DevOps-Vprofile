@@ -23,7 +23,9 @@ phases:
   build:
    commands:
     - echo Importing database backup...
-    - MYSQL_PWD="$DB_PASSWORD" mysql -h "$DB_HOST" -u "$DB_USERNAME" accounts < db_backup.sql
+    - mysql --password="$DB_PASSWORD" -h "$DB_HOST" -u "$DB_USERNAME" accounts < db_backup.sql
+    
+
 
   post_build:
     commands:
