@@ -15,8 +15,8 @@ phases:
       - export DB_HOST=$(aws ssm get-parameter --name "/vprofile/db_host" --query "Parameter.Value" --output text)
       - export DB_USERNAME=$(aws ssm get-parameter --name "/vprofile/db_user" --with-decryption --query "Parameter.Value" --output text)
       - export DB_PASSWORD=$(aws ssm get-parameter --name "/vprofile/db_password" --with-decryption --query "Parameter.Value" --output text)
-      - echo "✅ DB_HOST set to: $DB_HOST"
-      - echo "✅ DB_USERNAME set to: $DB_USERNAME"
+      - echo "✅ DB_HOST: $DB_HOST"
+      - echo "✅ DB_USERNAME: $DB_USERNAME"
       - echo "✅ DB_PASSWORD set (hidden)"
 
   build:
@@ -30,11 +30,11 @@ phases:
       - if [ ! -f db_backup.sql ]; then echo "❌ Error: db_backup.sql not found!"; exit 1; fi
 
       - echo "🔎 Testing MySQL connection..."
-      - mysqladmin -h $DB_HOST -u $DB_USERNAME -p$DB_PASSWORD ping
+      - mysqladmin -h "$DB_HOST" -u "$DB_USERNAME" -p"$DB_PASSWORD" ping
 
       - echo "🚀 Importing database backup..."
-      - export MYSQL_PWD=$DB_PASSWORD
-      - mysql -h $DB_HOST -u $DB_USERNAME accounts < db_backup.sql
+      - export MYSQL_PWD="$DB_PASSWORD"
+      - mysql -h "$DB_HOST" -u "$DB_USERNAME" accounts < db_backup.sql
 
   post_build:
     commands:
