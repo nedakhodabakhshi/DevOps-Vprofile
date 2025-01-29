@@ -21,14 +21,14 @@ phases:
       - echo "Environment variables set successfully."
 
   build:
-    commands:
+   commands:
     - echo "🔎 Checking for db_backup.sql..."
-    - test -f db_backup.sql || { echo "Error: db_backup.sql not found!"; exit 1; }
+    - if [ ! -f db_backup.sql ]; then echo "❌ Error: db_backup.sql not found!"; exit 1; fi
 
     - echo "🔎 Testing MySQL connection..."
-    - mysqladmin ping -h "$DB_HOST" -u "$DB_USERNAME" --password="$DB_PASSWORD" || { echo "MySQL connection failed!"; exit 1; }
+    - mysqladmin ping -h "$DB_HOST" -u "$DB_USERNAME" --password="$DB_PASSWORD" || exit 1
 
-    - echo "Importing database backup..."
+    - echo "🚀 Importing database backup..."
     - MYSQL_PWD="$DB_PASSWORD" mysql -h "$DB_HOST" -u "$DB_USERNAME" accounts < db_backup.sql
 
 
