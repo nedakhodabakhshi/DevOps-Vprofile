@@ -1,1 +1,41 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      java: corretto11
+    commands:
+      - echo "📦 Updating package lists..."
+      - sudo apt-get update -y
+      - echo "🔧 Installing required packages..."
+      - sudo apt-get install -y maven mysql-client
+
+  pre_build:
+    commands:
+      - echo "🔍 Fetching database credentials..."
+      - DB_HOST=$(aws ssm get-parameter --name "/vprofile/db_host" --query "Parameter.Value" --output text)
+      - DB_USERNAME=$(aws ssm get-parameter --name "/vprofile/db_user" --with-decryption --query "Parameter.Value" --output text)
+      - DB_PASSWORD=$(aws ssm get-parameter --name "/vprofile/db_password" --with-decryption --query "Parameter.Value" --output text)
+      - echo "✅ Environment variables loaded."
+
+  build:
+    commands:
+      - echo "🔎 Checking db_backup.sql file..."
+      - ls -lah
+      - test -f db_backup.sql || { echo "❌ Error: db_backup.sql not found!"; exit 1; }
+
+      - echo "🔎 Testing MySQL connection..."
+      - mysqladmin ping -h "$DB_HOST" -u "$DB_USERNAME" --password="$DB_PASSWORD"
+
+      - echo "🚀 Importing database backup..."
+      - export MYSQL_PWD="$DB_PASSWORD"
+      - mysql -h "$DB_HOST" -u "$DB_USERNAME" accounts < db_backup.sql
+
+  post_build:
+    commands:
+      - echo "✅ Database import completed successfully."
+
+artifacts:
+  files:
+    - db_backup.sql
 
