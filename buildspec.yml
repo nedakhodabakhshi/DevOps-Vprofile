@@ -14,24 +14,22 @@ phases:
     commands:
       - echo "Setting up environment variables..."
       - export DB_HOST="vp-rds-instance.c1u4si4autpe.us-east-1.rds.amazonaws.com"
-      - export DB_USERNAME="admin"
-      - export DB_PASSWORD="RdsDatabase123"
       - export MEMCACHED_ACTIVE_HOST="cl-vp-12kt98x4snyb.9tytbr.cfg.use1.cache.amazonaws.com:11211"
       - export RABBITMQ_ADDRESS="b-1eb869d2-0f9b-4691-9d17-740bfc3c4189-1.mq.us-east-1.amazonaws.com:61617"
       - echo "Environment variables set successfully."
 
   build:
-   commands:
-    - echo Importing database backup...
-    - mysql --password="$DB_PASSWORD" -h "$DB_HOST" -u "$DB_USERNAME" accounts < db_backup.sql
-    
+    commands:
+      - echo "🔎 Checking db_backup.sql file..."
+      - if [ ! -s db_backup.sql ]; then echo "❌ db_backup.sql is missing or empty!"; exit 1; fi
 
+      - echo "🚀 Importing database backup..."
+      - mysql --password="RdsDatabase123" -h "vp-rds-instance.c1u4si4autpe.us-east-1.rds.amazonaws.com" -u "admin" accounts < db_backup.sql
 
   post_build:
     commands:
-      - echo "Database import completed successfully."
+      - echo "✅ Database import completed successfully."
 
 artifacts:
   files:
     - db_backup.sql
-
