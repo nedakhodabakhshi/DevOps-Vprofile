@@ -1,1 +1,43 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      java: corretto11
+    commands:
+      - echo "Updating package lists..."
+      - apt-get update -y
+      - echo "Installing Maven..."
+      - apt-get install -y maven
+
+  pre_build:
+    commands:
+      - echo "Setting up environment variables..."
+      - export DB_HOST="vp-rds-instance.c1u4si4autpe.us-east-1.rds.amazonaws.com"
+      - export DB_USERNAME="admin"
+      - export DB_PASSWORD="RdsDatabase123"
+      - export MEMCACHED_ACTIVE_HOST="cl-vp-12kt98x4snyb.9tytbr.cfg.use1.cache.amazonaws.com:11211"
+      - export RABBITMQ_ADDRESS="b-1eb869d2-0f9b-4691-9d17-740bfc3c4189-1.mq.us-east-1.amazonaws.com:61617"
+      - echo "Environment variables set successfully."
+
+  build:
+    commands:
+      - echo "Checking if db_backup.sql exists..."
+      - ls -lah
+      - if [ ! -f db_backup.sql ]; then echo "Error: db_backup.sql not found!"; exit 1; fi
+
+      - echo "Testing MySQL connection..."
+      - mysqladmin ping -h "$DB_HOST" -u "$DB_USERNAME" --password="$DB_PASSWORD"
+
+      - echo "Importing database backup..."
+      - export MYSQL_PWD="$DB_PASSWORD"
+      - mysql -h "$DB_HOST" -u "$DB_USERNAME" accounts < db_backup.sql
+
+  post_build:
+    commands:
+      - echo "Database import completed successfully."
+
+artifacts:
+  files:
+    - db_backup.sql
 
