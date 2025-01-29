@@ -12,12 +12,9 @@ phases:
   pre_build:
     commands:
       - echo "🔍 Setting up environment variables..."
-      - export DB_HOST=$(aws ssm get-parameter --name "/vprofile/db_host" --query "Parameter.Value" --output text)
-      - export DB_USERNAME=$(aws ssm get-parameter --name "/vprofile/db_user" --with-decryption --query "Parameter.Value" --output text)
-      - export DB_PASSWORD=$(aws ssm get-parameter --name "/vprofile/db_password" --with-decryption --query "Parameter.Value" --output text)
-      - echo "✅ DB_HOST: $DB_HOST"
-      - echo "✅ DB_USERNAME: $DB_USERNAME"
-      - echo "✅ DB_PASSWORD set (hidden)"
+      - export DB_HOST=$(aws ssm get-parameter --name "/vprofile/db_host" --query "Parameter.Value" --output text) && echo "✅ DB_HOST set"
+      - export DB_USERNAME=$(aws ssm get-parameter --name "/vprofile/db_user" --with-decryption --query "Parameter.Value" --output text) && echo "✅ DB_USERNAME set"
+      - export DB_PASSWORD=$(aws ssm get-parameter --name "/vprofile/db_password" --with-decryption --query "Parameter.Value" --output text) && echo "✅ DB_PASSWORD set (hidden)"
 
   build:
     commands:
