@@ -20,9 +20,6 @@ phases:
 
   build:
     commands:
-      - echo "🔎 Checking db_backup.sql file..."
-      - if [ ! -s db_backup.sql ]; then echo "❌ db_backup.sql is missing or empty!"; exit 1; fi
-
       - echo "🚀 Importing database backup..."
       - mysql --password="RdsDatabase123" -h "vp-rds-instance.c1u4si4autpe.us-east-1.rds.amazonaws.com" -u "admin" accounts < db_backup.sql
 
