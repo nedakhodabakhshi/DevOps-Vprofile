@@ -3,34 +3,30 @@ version: 0.2
 phases:
   install:
     runtime-versions:
-      java: corretto11
+      java: 11
     commands:
-      - echo "Updating package lists..."
-      - apt-get update -y
-      - echo "Installing Maven..."
-      - sudo apt-get install -y maven mysql-client -y
-
+      - echo "Installing dependencies"
+      - apt install dos2unix  -y
+      - chmod +x install.sh
+      - dos2unix ./install.sh
+      - mvn install
   pre_build:
     commands:
-      #- echo "🔎 Downloading db_backup.sql from GitHub..."
-      #- curl -o db_backup.sql https://github.com/nedakhodabakhshi/DevOps-Vprofile/blob/main/src/main/resources/db_backup.sql 
-      #- echo "Copying db_backup.sql to the root directory..."
-      #- cp src/main/resources/db_backup.sql .
-      - echo "Setting up environment variables..."
-      - export DB_HOST="vp-rds-instance.c1u4si4autpe.us-east-1.rds.amazonaws.com"
-      - export MEMCACHED_ACTIVE_HOST="cl-vp-12kt98x4snyb.9tytbr.cfg.use1.cache.amazonaws.com:11211"
-      - export RABBITMQ_ADDRESS="b-1eb869d2-0f9b-4691-9d17-740bfc3c4189-1.mq.us-east-1.amazonaws.com:61617"
-      - echo "Environment variables set successfully."
+      - echo "Logging in to Amazon ECR"
+      - docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
+      - aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin "$NUMBER.dkr.ecr.us-east-1.amazonaws.com"
 
   build:
     commands:
-      - echo "🚀 Importing database backup..."
-      - mysql --password="RdsDatabase123" -h "vp-rds-instance.c1u4si4autpe.us-east-1.rds.amazonaws.com" -u "admin" accounts < src/main/resources/db_backup.sql
+      - echo "Building Docker image"
+      - docker build -t "$NUMBER.dkr.ecr.us-east-1.amazonaws.com/java:latest" .
 
   post_build:
     commands:
-      - echo "✅ Database import completed successfully."
-
-artifacts:
-  files:
-    - db_backup.sql
+      - echo "Pushing Docker image to Amazon ECR"
+      - docker push "$NUMBER.dkr.ecr.us-east-1.amazonaws.com/java:latest"
+      - echo "Deploying to EKS"
+      - aws eks update-kubeconfig --region us-east-1 --name mycluster
+      - kubectl apply -f deployment.yaml
+      - kubectl apply -f service.yaml
+      - kubectl get svc
