@@ -24,7 +24,7 @@ phases:
   post_build:
     commands:
       - echo "Pushing Docker image to Amazon ECR"
-      - docker push "$NUMBER.dkr.ecr.us-east-1.amazonaws.com/java:latest"
+      - docker push "$557690612191.dkr.ecr.us-east-1.amazonaws.com/vprofile/java:latest"
       - echo "Deploying to EKS"
       - aws eks update-kubeconfig --region us-east-1 --name mycluster
       - kubectl apply -f deployment.yaml
