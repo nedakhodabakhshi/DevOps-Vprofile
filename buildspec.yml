@@ -14,17 +14,17 @@ phases:
     commands:
       - echo "Logging in to Amazon ECR"
       - docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
-      - aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin "557690612191.dkr.ecr.us-east-1.amazonaws.com/java"
+      - aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 557690612191.dkr.ecr.us-east-1.amazonaws.com/java
 
   build:
     commands:
       - echo "Building Docker image"
-      - docker build -t "557690612191.dkr.ecr.us-east-1.amazonaws.com/java:latest" 
+      - docker build -t 557690612191.dkr.ecr.us-east-1.amazonaws.com/java:latest
 
   post_build:
     commands:
       - echo "Pushing Docker image to Amazon ECR"
-      - docker push "557690612191.dkr.ecr.us-east-1.amazonaws.com/java:latest"
+      - docker push 557690612191.dkr.ecr.us-east-1.amazonaws.com/java:latest
       - echo "Deploying to EKS"
       - aws eks update-kubeconfig --region eu-west-1 --name mycluster
       - kubectl apply -f deployment.yaml
