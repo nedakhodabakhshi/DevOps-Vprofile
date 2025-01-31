@@ -24,11 +24,15 @@ phases:
       - aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 557690612191.dkr.ecr.us-east-1.amazonaws.com
       - echo "Checking if repository exists..."
       - aws ecr describe-repositories --repository-names java --region us-east-1 || aws ecr create-repository --repository-name java --region us-east-1
+      - echo "Ensuring privileged mode is enabled..."
+      - if [ "$(docker info | grep -c 'SecurityOptions')" -eq 0 ]; then echo "Privileged mode is not enabled!" && exit 1; fi
     
   build:
     commands:
+      - echo "Checking if Dockerfile exists..."
+      - if [ ! -f ./Dockerfile ]; then echo "ERROR: Dockerfile not found!"; exit 1; fi
       - echo "Building Docker image"
-      - docker build -t 557690612191.dkr.ecr.us-east-1.amazonaws.com/java:latest .
+      - docker build --no-cache -t 557690612191.dkr.ecr.us-east-1.amazonaws.com/java:latest -f ./Dockerfile .
       
   post_build:
     commands:
@@ -39,3 +43,6 @@ phases:
       - kubectl apply -f deployment.yaml
       - kubectl apply -f service.yaml
       - kubectl get svc
+
+computeTypeOverride: BUILD_GENERAL1_LARGE
+privilegedMode: true
